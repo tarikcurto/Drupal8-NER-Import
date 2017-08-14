@@ -1,0 +1,12 @@
+{
+  "name": "tarikcurto/ner_import",
+  "description": "NER (Named Entity Recognition) - import processed data.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "Tarik Curto",
+      "email": "centro.tarik@live.com"
+    }
+  ]
+}
