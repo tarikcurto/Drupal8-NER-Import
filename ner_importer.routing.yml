@@ -1,0 +1,7 @@
+ner_importer.setup:
+  path: '/admin/config/ner/importer'
+  defaults:
+    _controller: '\Drupal\ner_importer\MainController:setup'
+    _title: 'NER importer'
+  requirements:
+    _permission: 'access content'
