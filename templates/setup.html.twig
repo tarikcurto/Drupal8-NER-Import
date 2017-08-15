@@ -1,0 +1,15 @@
+<main class="page-content clearfix" role="main">
+
+    <div class="region region-content">
+
+        <div class="block">
+
+            {% for link_text, link_href in links %}
+                <a href="{{ link_href }}">{{ link_text }}</a>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</main>

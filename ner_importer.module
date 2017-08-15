@@ -1,0 +1,14 @@
+<?php
+
+function ner_importer_theme()
+{
+
+    $theme['setup_page'] = [
+        'variables' => [
+            'links' => []
+        ],
+        'template' => 'setup'
+    ];
+
+    return $theme;
+}
