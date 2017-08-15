@@ -1,0 +1,7 @@
+services:
+
+  ner_importer.import:
+    class: Drupal\ner_importer\Import
+
+  ner_importer.json_import:
+    class: Drupal\ner_importer\JsonImport
