@@ -16,6 +16,13 @@ class JsonImport extends Import
 {
 
     /**
+     * JSON object with client import data.
+     *
+     * @var object|array
+     */
+    protected $jsonSource;
+
+    /**
      * JSON import source list to
      * ObjectEntity list.
      *
@@ -26,7 +33,6 @@ class JsonImport extends Import
      */
     public function objectEntityListByJson($json, $buildSubObject = true)
     {
-
         $objectEntityList = [];
         foreach ($json as $stdClass) {
             $objectEntity = $this->objectEntityByJson($stdClass, $buildSubObject);

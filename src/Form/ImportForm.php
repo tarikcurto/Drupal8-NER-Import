@@ -53,14 +53,6 @@ class ImportForm extends FormBase
      */
     public function buildForm(array $form, FormStateInterface $form_state)
     {
-        $form['definition_regex'] = [
-            '#type' => 'textfield',
-            '#title' => $this->t('Definition name'),
-            '#required' => true,
-            '#attributes' => [
-                'placeholder' => 'REGEX of defintion name.'
-            ]
-        ];
         $form['source_import'] = [
             '#type' => 'textarea',
             '#title' => $this->t('Import source'),
@@ -84,9 +76,6 @@ class ImportForm extends FormBase
      */
     public function validateForm(array &$form, FormStateInterface $form_state)
     {
-        if (!preg_match("/^\/[\w\W]*\/$/", $form_state->getValue('definition_regex')))
-            $form_state->setErrorByName('definition_regex', $this->t('Your defintion name REGEX is not valid.'));
-
         // Convert source_import: JSON string => Object || Array
         $form_state->setValue('source_import', \json_decode($form_state->getValue('source_import')));
         if (!(\is_object($form_state->getValue('source_import')) || \is_array($form_state->getValue('source_import'))))
@@ -98,15 +87,16 @@ class ImportForm extends FormBase
      */
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-
         $sourceImportType = gettype($form_state->getValue('source_import'));
         $sourceImportIsSingleObject = $sourceImportType == 'object' && property_exists($form_state->getValue('source_import'), 'id');
 
         if ($sourceImportIsSingleObject) {
-            /** @var ObjectEntity */
+
             $objectEntity = $this->nerJsonImport->objectEntityByJson($form_state->getValue('source_import'));
+            $this->nerJsonImport->contentTypeByObjectEntity($objectEntity);
         } else {
-            /** ALERT! source_import can be a map object OR array. @var ObjectEntity[] */
+
+            // source_import can be a map object OR array.
             $objectEntityList = $this->nerJsonImport->objectEntityListByJson($form_state->getValue('source_import'));
         }
 
