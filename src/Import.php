@@ -2,8 +2,9 @@
 
 namespace Drupal\ner_importer;
 
+use Drupal\custom_content_type\CreateContentType;
 use Drupal\ner\DefinitionEntity;
-use Symfony\Component\Yaml\Yaml;
+use Drupal\ner\PropertyDefinitionEntity;
 use Drupal\ner\ObjectEntity;
 
 /**
@@ -24,36 +25,46 @@ class Import
     protected $objectEntity;
 
     /**
-     * Node type config YML structure.
-     * Path: resources/node.type._node.yml
-     *
-     * @var array
+     * @var DefinitionEntity
      */
-    protected $nodeType;
+    protected $definitionEntity;
 
     /**
-     * Field node config YML container.
-     * All config fields of current nodeType.
-     *
-     * @var array
+     * @var PropertyDefinitionEntity
      */
-    protected $nodeFieldList;
+    protected $propertyDefinitionEntity;
 
     /**
-     * Field node config YML structure.
-     * Path: resources/field.field.node._node._field.yml
+     * All config nodes of current object
+     * instance.
      *
-     * @var array
+     * [nodeId => node]
+     *
+     * @var CreateContentType[]
      */
-    protected $nodeField;
+    protected $contentTypeMap;
+
+    /**
+     * Current ContentType instance
+     *
+     * @var CreateContentType
+     */
+    protected $contentType;
+
+    /**
+     * Memory of processed fields by
+     * by CreateContentType instances.
+     *
+     * [nodeId => [fieldId, ...]]
+     *
+     * @var array[]
+     */
+    protected $contentFieldListMap;
 
     public function __construct()
     {
-        $modulePath = drupal_get_path('module','ner_importer');
-        $resourcesPath = $modulePath . '/resources';
-
-        $this->nodeType = Yaml::parse($resourcesPath . '/node.type._node.yml');
-        $this->nodeField = Yaml::parse($resourcesPath . '/field.field.node._node._field.yml');
+        $this->contentTypeMap = [];
+        $this->contentFieldListMap = [];
     }
 
     /**
@@ -65,21 +76,18 @@ class Import
      */
     public function contentTypeByObjectEntity(ObjectEntity $objectEntity)
     {
-        //Define current object entity
         $this->objectEntity = $objectEntity;
-
-        /* TODO: set here call to method for search if current object entity
-           type exists on nodeTypeList, and set this node type as default for content type. */
-
         $this->nodeTypeConfig();
 
+        $this->contentTypeMap[] = $this->contentType;
+        $this->contentFieldListMap[$this->contentType->getNodeTypeId()] = [];
+
         if(is_array($this->objectEntity->getSubObjectMap()))
-            // Definitions of sub-group object.
             foreach ($this->objectEntity->getSubObjectMap() as $subObject)
-                $this->nodeFieldListConfig($subObject->getDefinitionMap());
+                $this->nodeFieldListConfigByDefinitionEntityList($subObject->getDefinitionMap());
 
         if(is_array($this->objectEntity->getDefinitionMap()))
-            $this->nodeFieldListConfig($this->objectEntity->getDefiniti);
+            $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
     }
 
     /**
@@ -90,8 +98,16 @@ class Import
      */
     protected function nodeTypeConfig(){
 
-        $this->nodeType['name'] = TransformImport::nameByString($this->objectEntity->getType());
-        $this->nodeType['type'] = TransformImport::idByString($this->objectEntity->getType());
+        $nodeType = [];
+        $nodeId = TransformImport::idByString($this->objectEntity->getType());
+
+        if(isset($this->contentTypeMap[$nodeId]))
+            return;
+
+        $nodeType['type'] = $nodeId;
+        $nodeType['name'] = TransformImport::nameByString($this->objectEntity->getType());
+
+        $this->contentType = new CreateContentType($nodeType);
     }
 
     /**
@@ -99,10 +115,10 @@ class Import
      * @param DefinitionEntity[] $definitionEntityList
      * @return void
      */
-    protected function nodeFieldListConfig(array $definitionEntityList){
+    protected function nodeFieldListConfigByDefinitionEntityList(array $definitionEntityList){
 
         foreach ($definitionEntityList as $definitionEntity)
-            $this->nodeFieldConfig($definitionEntity);
+            $this->nodeFieldListConfigByDefinitionEntity($definitionEntity);
     }
 
     /**
@@ -110,7 +126,43 @@ class Import
      * @param DefinitionEntity $definitionEntity
      * @return void
      */
-    protected function nodeFieldConfig(DefinitionEntity $definitionEntity){
+    protected function nodeFieldListConfigByDefinitionEntity(DefinitionEntity $definitionEntity){
 
+        $this->definitionEntity = $definitionEntity;
+        $this->nodeFieldListConfigByPropertyDefinitionEntityList($definitionEntity->getPropertyDefinitionMap());
+    }
+
+    /**
+     *
+     * @param PropertyDefinitionEntity[] $propertyDefinitionEntityList
+     * @return void
+     */
+    protected function nodeFieldListConfigByPropertyDefinitionEntityList(array $propertyDefinitionEntityList){
+
+        foreach ($propertyDefinitionEntityList as $propertyDefinitionEntity)
+            $this->nodeFieldConfigByPropertyDefinitionEntity($propertyDefinitionEntity);
+    }
+
+    /**
+     *
+     * @param PropertyDefinitionEntity $propertyDefinitionEntity
+     * @return void
+     */
+    protected function nodeFieldConfigByPropertyDefinitionEntity(PropertyDefinitionEntity $propertyDefinitionEntity){
+
+        $this->propertyDefinitionEntity = $propertyDefinitionEntity;
+
+        $fieldName = TransformImport::idByString($this->definitionEntity->getSortId() . '.' . $this->propertyDefinitionEntity->getProperty());
+        $fieldId =  'node.' . $this->nodeType['type'] . '.' . $fieldName;
+
+        if(isset($this->contentFieldListMap[$fieldId]))
+            return;
+
+        $nodeField['field_name'] = $fieldName;
+        $nodeField['id'] = $fieldId;
+        $nodeField['label'] = TransformImport::nameByString($fieldName);
+        $this->contentType->addNodeField($nodeField);
+
+        $this->contentFieldListMap[$this->contentType->getNodeTypeId()][] = $fieldId;
     }
 }

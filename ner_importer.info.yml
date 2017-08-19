@@ -3,5 +3,7 @@ description: NER (Named Entity Recognition) - import processed data.
 package: Custom
 dependencies:
   - ner
+  - content_type_tool
+
 type: module
 core: 8.x

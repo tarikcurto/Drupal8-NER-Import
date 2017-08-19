@@ -19,7 +19,7 @@ class TransformImport
      */
     public static function idByString(string $string) : string{
 
-        $id = str_replace([' ', '-'], ['_', '_'], $string);
+        $id = str_replace([' ', '-', '.'], ['_', '_', '_'], $string);
         $id = strtolower($id);
 
         return $id;
@@ -32,7 +32,7 @@ class TransformImport
      */
     public static function nameByString(string $string) : string{
 
-        $name = str_replace(['_'], [' '], $string);
+        $name = str_replace(['_', '.'], [' ', ' '], $string);
         $name = strtolower($name);
         $name = ucfirst($name);
 
