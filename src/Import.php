@@ -2,7 +2,7 @@
 
 namespace Drupal\ner_importer;
 
-use Drupal\custom_content_type\CreateContentType;
+use Drupal\content_type_tool\CreateContentType;
 use Drupal\ner\DefinitionEntity;
 use Drupal\ner\PropertyDefinitionEntity;
 use Drupal\ner\ObjectEntity;
@@ -88,6 +88,8 @@ class Import
 
         if(is_array($this->objectEntity->getDefinitionMap()))
             $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
+
+        $this->contentType->setCoreEntity();
     }
 
     /**
@@ -152,16 +154,9 @@ class Import
 
         $this->propertyDefinitionEntity = $propertyDefinitionEntity;
 
-        $fieldName = TransformImport::idByString($this->definitionEntity->getSortId() . '.' . $this->propertyDefinitionEntity->getProperty());
-        $fieldId =  'node.' . $this->nodeType['type'] . '.' . $fieldName;
-
-        if(isset($this->contentFieldListMap[$fieldId]))
-            return;
-
-        $nodeField['field_name'] = $fieldName;
-        $nodeField['id'] = $fieldId;
-        $nodeField['label'] = TransformImport::nameByString($fieldName);
-        $this->contentType->addNodeField($nodeField);
+        $nodeField['field_name'] = 'field_' . TransformImport::idByString($this->definitionEntity->getSortId() . '.' . $this->propertyDefinitionEntity->getProperty());
+        $nodeField['label'] = TransformImport::nameByString($nodeField['field_name']);
+        $fieldId = $this->contentType->addField($nodeField, 'textline_plain');
 
         $this->contentFieldListMap[$this->contentType->getNodeTypeId()][] = $fieldId;
     }
