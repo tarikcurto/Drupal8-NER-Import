@@ -42,7 +42,7 @@ class Import
      *
      * @var CreateContentType[]
      */
-    protected $contentTypeMap;
+    protected $contentTypeList;
 
     /**
      * Current ContentType instance
@@ -51,20 +51,9 @@ class Import
      */
     protected $contentType;
 
-    /**
-     * Memory of processed fields by
-     * by CreateContentType instances.
-     *
-     * [nodeId => [fieldId, ...]]
-     *
-     * @var array[]
-     */
-    protected $contentFieldListMap;
-
     public function __construct()
     {
-        $this->contentTypeMap = [];
-        $this->contentFieldListMap = [];
+        $this->contentTypeList = [];
     }
 
     /**
@@ -77,10 +66,10 @@ class Import
     public function contentTypeByObjectEntity(ObjectEntity $objectEntity)
     {
         $this->objectEntity = $objectEntity;
-        $this->nodeTypeConfig();
+        $this->contentType = new CreateContentType();
+        $this->contentTypeList[] = $this->contentType;
 
-        $this->contentTypeMap[] = $this->contentType;
-        $this->contentFieldListMap[$this->contentType->getNodeTypeId()] = [];
+        $this->nodeTypeConfig();
 
         if(is_array($this->objectEntity->getSubObjectMap()))
             foreach ($this->objectEntity->getSubObjectMap() as $subObject)
@@ -89,7 +78,7 @@ class Import
         if(is_array($this->objectEntity->getDefinitionMap()))
             $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
 
-        $this->contentType->setCoreEntity();
+        $this->contentType->setEntityDisplay();
     }
 
     /**
@@ -103,13 +92,14 @@ class Import
         $nodeType = [];
         $nodeId = TransformImport::idByString($this->objectEntity->getType());
 
-        if(isset($this->contentTypeMap[$nodeId]))
-            return;
+        // TODO: Update this
+        /*if(isset($this->contentTypeList[$nodeId]))
+            return;*/
 
         $nodeType['type'] = $nodeId;
         $nodeType['name'] = TransformImport::nameByString($this->objectEntity->getType());
 
-        $this->contentType = new CreateContentType($nodeType);
+        $this->contentType->setNodeType($nodeType);
     }
 
     /**
@@ -158,6 +148,7 @@ class Import
         $nodeField['label'] = TransformImport::nameByString($nodeField['field_name']);
         $fieldId = $this->contentType->addField($nodeField, 'textline_plain');
 
-        $this->contentFieldListMap[$this->contentType->getNodeTypeId()][] = $fieldId;
+        // TODO: update this
+        //$this->contentFieldListMap[$fieldId] = $fieldId;
     }
 }
