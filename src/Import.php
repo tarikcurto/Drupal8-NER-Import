@@ -79,6 +79,7 @@ class Import
             $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
 
         $this->contentType->setEntityDisplay();
+        $this->contentType->save();
     }
 
     /**
