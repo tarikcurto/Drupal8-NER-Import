@@ -70,6 +70,7 @@ class Import
         $this->contentTypeList[] = $this->contentType;
 
         $this->nodeTypeConfig();
+        $this->nodeFieldBodyConfig();
 
         if(is_array($this->objectEntity->getSubObjectMap()))
             foreach ($this->objectEntity->getSubObjectMap() as $subObject)
@@ -101,6 +102,17 @@ class Import
         $nodeType['name'] = TransformImport::nameByString($this->objectEntity->getType());
 
         $this->contentType->setNodeType($nodeType);
+    }
+
+    /**
+     * Build node type config using current
+     * node type config
+     *
+     * @return void
+     */
+    protected function nodeFieldBodyConfig(){
+
+        $this->contentType->addFieldBody();
     }
 
     /**
@@ -147,7 +159,7 @@ class Import
 
         $nodeField['field_name'] = 'field_' . TransformImport::idByString($this->definitionEntity->getSortId() . '.' . $this->propertyDefinitionEntity->getProperty());
         $nodeField['label'] = TransformImport::nameByString($nodeField['field_name']);
-        $fieldId = $this->contentType->addField($nodeField, 'textline_plain');
+        $fieldId = $this->contentType->addField($nodeField, 'string_textfield');
 
         // TODO: update this
         //$this->contentFieldListMap[$fieldId] = $fieldId;
