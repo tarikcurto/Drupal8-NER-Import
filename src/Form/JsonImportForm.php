@@ -1,19 +1,19 @@
 <?php
 
-namespace Drupal\ner_importer\Form;
+namespace Drupal\ner_import\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ner\ObjectEntity;
-use Drupal\ner_importer\JsonImport;
+use Drupal\ner_import\JsonImport;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Implements NER importer form.
  *
- * @package Drupal\ner_importer\Form
+ * @package Drupal\ner_import\Form
  */
-class ImportForm extends FormBase
+class JsonImportForm extends FormBase
 {
 
     /**
@@ -35,7 +35,7 @@ class ImportForm extends FormBase
     public static function create(ContainerInterface $container)
     {
         return new static(
-            $container->get('ner_importer.json_import')
+            $container->get('ner_import.json_import')
         );
     }
 
@@ -45,7 +45,7 @@ class ImportForm extends FormBase
      */
     public function getFormId()
     {
-        return 'ner_importer.import';
+        return 'ner_import.import';
     }
 
     /**

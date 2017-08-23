@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\ner_importer;
+namespace Drupal\ner_import;
 
 
 /**
  * Utils for transform NER data
  * to Drupal data.
  *
- * @package Drupal\ner_importer
+ * @package Drupal\ner_import
  */
 class TransformImport
 {

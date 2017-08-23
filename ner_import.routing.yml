@@ -1,0 +1,15 @@
+ner_import.setup:
+  path: '/admin/config/ner/import'
+  defaults:
+    _controller: '\Drupal\ner_import\Controller\MainController:setup'
+    _title: 'NER import'
+  requirements:
+    _permission: 'access content'
+
+ner_import.import:
+  path: '/admin/config/ner/import/json'
+  defaults:
+    _form: '\Drupal\ner_import\Form\JsonImportForm'
+    _title: 'Import JSON'
+  requirements:
+    _permission: 'access content'

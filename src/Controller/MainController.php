@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\ner_importer\Controller;
+namespace Drupal\ner_import\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
@@ -24,7 +24,7 @@ class MainController extends ControllerBase
         return [
             '#theme' => 'setup_page',
             '#links' => [
-                (string)$this->t('NER import') => Url::fromRoute('ner_importer.import')
+                (string)$this->t('Import using JSON script.') => Url::fromRoute('ner_import.import')
             ]
         ];
     }

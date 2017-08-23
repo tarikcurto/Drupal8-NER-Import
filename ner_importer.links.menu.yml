@@ -1,6 +1,0 @@
-ner_importer.admin_config_ner_importer:
-  title: 'NER importer'
-  description: 'Import NER script to platform.'
-  parent: ner.admin_config_ner
-  route_name: ner_importer.setup
-  weight: 100

@@ -1,6 +1,6 @@
 <?php
 
-function ner_importer_theme()
+function ner_import_theme()
 {
 
     $theme['setup_page'] = [

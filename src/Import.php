@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\ner_importer;
+namespace Drupal\ner_import;
 
 use Drupal\content_type_tool\CreateContentType;
 use Drupal\ner\DefinitionEntity;

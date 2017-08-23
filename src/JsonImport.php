@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\ner_importer;
+namespace Drupal\ner_import;
 
 use Drupal\ner\DefinitionEntity;
 use Drupal\ner\ObjectEntity;
@@ -10,7 +10,7 @@ use Drupal\ner\PropertyDefinitionEntity;
  * NER import extension for import NER
  * sources in JSON format.
  *
- * @package Drupal\ner_importer
+ * @package Drupal\ner_import
  */
 class JsonImport extends Import
 {
