@@ -110,6 +110,9 @@ class JsonImport extends Import
         if (isset($jsonDefinition->sortId))
             $definitionEntity->setSortId($jsonDefinition->sortId);
 
+        if (isset($jsonDefinition->content))
+            $definitionEntity->setContent($jsonDefinition->content);
+
         if (isset($jsonDefinition->extractionAlgorithm))
             $definitionEntity->setExtractionAlgorithm($jsonDefinition->extractionAlgorithm);
 
