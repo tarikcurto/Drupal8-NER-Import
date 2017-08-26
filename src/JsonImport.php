@@ -48,10 +48,9 @@ class JsonImport extends Import
      * ObjectEntity.
      *
      * @param \stdClass $json
-     * @param boolean $buildSubObject Check if $json has subObject.
      * @return ObjectEntity;
      */
-    public function objectEntityByJson(\stdClass $json, $buildSubObject = true): ObjectEntity
+    public function objectEntityByJson(\stdClass $json): ObjectEntity
     {
 
         $objectEntity = new ObjectEntity();
@@ -64,11 +63,6 @@ class JsonImport extends Import
 
         if (isset($json->content))
             $objectEntity->setContent($json->content);
-
-        if ($buildSubObject && isset($json->subObjectMap)) {
-            $objectEntityMap2 = $this->objectEntityListByJson($json->subObjectMap, false);
-            $objectEntity->setSubObjectMap($objectEntityMap2);
-        }
 
         if (isset($json->definitionMap)) {
             $definitionEntityMap = $this->definitionEntityListByJsonDefinitionList($json->definitionMap);
