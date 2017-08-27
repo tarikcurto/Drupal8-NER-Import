@@ -1,4 +1,13 @@
 <?php
+/**
+ * DRUPAL 8 NER importer.
+ * Copyright (C) 2017. Tarik Curto <centro.tarik@live.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ */
 
 namespace Drupal\ner_import;
 
@@ -12,8 +21,7 @@ use Drupal\ner\PropertyDefinitionEntity;
  *
  * @package Drupal\ner_import
  */
-class JsonImport extends Import
-{
+class JsonImport extends Import {
 
     /**
      * JSON object with client import data.
@@ -31,8 +39,7 @@ class JsonImport extends Import
      * @param boolean $buildSubObject Check if $json has subObject.
      * @return ObjectEntity[]
      */
-    public function objectEntityListByJson($json, $buildSubObject = true)
-    {
+    public function objectEntityListByJson($json, $buildSubObject = true) {
         $objectEntityList = [];
         foreach ($json as $stdClass) {
             $objectEntity = $this->objectEntityByJson($stdClass, $buildSubObject);
@@ -50,8 +57,7 @@ class JsonImport extends Import
      * @param \stdClass $json
      * @return ObjectEntity;
      */
-    public function objectEntityByJson(\stdClass $json): ObjectEntity
-    {
+    public function objectEntityByJson(\stdClass $json): ObjectEntity {
 
         $objectEntity = new ObjectEntity();
 
@@ -79,8 +85,7 @@ class JsonImport extends Import
      * @param \stdClass|\stdClass[] $jsonDefinitionList
      * @return DefinitionEntity[]
      */
-    protected function definitionEntityListByJsonDefinitionList($jsonDefinitionList)
-    {
+    protected function definitionEntityListByJsonDefinitionList($jsonDefinitionList) {
 
         $definitionEntityList = [];
         foreach ($jsonDefinitionList as $jsonDefinition) {
@@ -99,8 +104,7 @@ class JsonImport extends Import
      * @param \stdClass $jsonDefinition
      * @return DefinitionEntity
      */
-    protected function definitionEntityByJsonDefinition(\stdClass $jsonDefinition): DefinitionEntity
-    {
+    protected function definitionEntityByJsonDefinition(\stdClass $jsonDefinition): DefinitionEntity {
 
         $definitionEntity = new DefinitionEntity();
 
@@ -131,8 +135,7 @@ class JsonImport extends Import
      * @param \stdClass|\stdClass[] $jsonPropertyDefinitionList
      * @return PropertyDefinitionEntity[]
      */
-    protected function propertyDefinitionEntityListByJsonPropertyDefinitionList($jsonPropertyDefinitionList)
-    {
+    protected function propertyDefinitionEntityListByJsonPropertyDefinitionList($jsonPropertyDefinitionList) {
 
         $propertyDefinitionEntityList = [];
         foreach ($jsonPropertyDefinitionList as $jsonPropertyDefinition) {
@@ -150,8 +153,7 @@ class JsonImport extends Import
      * @param \stdClass $jsonPropertyDefinition
      * @return PropertyDefinitionEntity
      */
-    protected function propertyDefinitionEntityByJsonPropertyDefinition(\stdClass $jsonPropertyDefinition): PropertyDefinitionEntity
-    {
+    protected function propertyDefinitionEntityByJsonPropertyDefinition(\stdClass $jsonPropertyDefinition): PropertyDefinitionEntity {
 
         $propertyDefinitionEntity = new PropertyDefinitionEntity();
 

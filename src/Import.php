@@ -1,19 +1,27 @@
 <?php
+/**
+ * DRUPAL 8 NER importer.
+ * Copyright (C) 2017. Tarik Curto <centro.tarik@live.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ */
 
 namespace Drupal\ner_import;
 
 use Drupal\content_type_tool\CreateContentType;
 use Drupal\ner\DefinitionEntity;
-use Drupal\ner\PropertyDefinitionEntity;
 use Drupal\ner\ObjectEntity;
+use Drupal\ner\PropertyDefinitionEntity;
 
 /**
  * Import NER processed data.
  *
  * @package Drupal\ner_import
  */
-class Import
-{
+class Import {
     /**
      * @var ObjectEntity[]
      */
@@ -58,8 +66,7 @@ class Import
      */
     protected $fieldNameList;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->contentType = new CreateContentType();
     }
 
@@ -69,41 +76,21 @@ class Import
      *
      * @param ObjectEntity[] $objectEntityList
      */
-    public function contentTypeByObjectEntityList($objectEntityList){
+    public function contentTypeByObjectEntityList($objectEntityList) {
 
         $objectEntityKeyList = array_keys($objectEntityList);
-        for($i = 0; $i < count($objectEntityList); $i++){
+        for ($i = 0; $i < count($objectEntityList); $i++) {
 
             $this->objectEntity = $objectEntityList[$objectEntityKeyList[$i]];
 
-            if($i == 0){
+            if ($i == 0) {
                 $this->nodeTypeConfig();
                 $this->nodeFieldBodyConfig();
             }
 
-            if(is_array($this->objectEntity->getDefinitionMap()))
+            if (is_array($this->objectEntity->getDefinitionMap()))
                 $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
         }
-
-        $this->contentType->setEntityDisplay();
-        $this->contentType->save();
-    }
-
-    /**
-     * Create custom content type using
-     * a instance of ner\ObjectEntity.
-     *
-     * @param ObjectEntity $objectEntity
-     */
-    public function contentTypeByObjectEntity(ObjectEntity $objectEntity)
-    {
-        $this->objectEntity = $objectEntity;
-
-        $this->nodeTypeConfig();
-        $this->nodeFieldBodyConfig();
-
-        if(is_array($this->objectEntity->getDefinitionMap()))
-            $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
 
         $this->contentType->setEntityDisplay();
         $this->contentType->save();
@@ -115,7 +102,7 @@ class Import
      *
      * @return void
      */
-    protected function nodeTypeConfig(){
+    protected function nodeTypeConfig() {
 
         $nodeType = [];
         $nodeId = TransformImport::idByString($this->objectEntity->getType());
@@ -136,7 +123,7 @@ class Import
      *
      * @return void
      */
-    protected function nodeFieldBodyConfig(){
+    protected function nodeFieldBodyConfig() {
 
         $this->contentType->addFieldBody();
     }
@@ -146,7 +133,7 @@ class Import
      * @param DefinitionEntity[] $definitionEntityList
      * @return void
      */
-    protected function nodeFieldListConfigByDefinitionEntityList(array $definitionEntityList){
+    protected function nodeFieldListConfigByDefinitionEntityList(array $definitionEntityList) {
 
         foreach ($definitionEntityList as $definitionEntity)
             $this->nodeFieldListConfigByDefinitionEntity($definitionEntity);
@@ -157,7 +144,7 @@ class Import
      * @param DefinitionEntity $definitionEntity
      * @return void
      */
-    protected function nodeFieldListConfigByDefinitionEntity(DefinitionEntity $definitionEntity){
+    protected function nodeFieldListConfigByDefinitionEntity(DefinitionEntity $definitionEntity) {
 
         $this->definitionEntity = $definitionEntity;
         $this->nodeFieldListConfigByPropertyDefinitionEntityList($definitionEntity->getPropertyDefinitionMap());
@@ -168,7 +155,7 @@ class Import
      * @param PropertyDefinitionEntity[] $propertyDefinitionEntityList
      * @return void
      */
-    protected function nodeFieldListConfigByPropertyDefinitionEntityList(array $propertyDefinitionEntityList){
+    protected function nodeFieldListConfigByPropertyDefinitionEntityList(array $propertyDefinitionEntityList) {
 
         foreach ($propertyDefinitionEntityList as $propertyDefinitionEntity)
             $this->nodeFieldConfigByPropertyDefinitionEntity($propertyDefinitionEntity);
@@ -179,18 +166,37 @@ class Import
      * @param PropertyDefinitionEntity $propertyDefinitionEntity
      * @return void
      */
-    protected function nodeFieldConfigByPropertyDefinitionEntity(PropertyDefinitionEntity $propertyDefinitionEntity){
+    protected function nodeFieldConfigByPropertyDefinitionEntity(PropertyDefinitionEntity $propertyDefinitionEntity) {
 
         $this->propertyDefinitionEntity = $propertyDefinitionEntity;
 
         $nodeField['field_name'] = 'field_' . TransformImport::idByString($this->propertyDefinitionEntity->getProperty());
         $nodeField['label'] = TransformImport::nameByString($nodeField['field_name']);
 
-        if(in_array($nodeField['field_name'], $this->fieldNameList))
+        if (in_array($nodeField['field_name'], $this->fieldNameList))
             return;
 
         $this->fieldNameList[] = $nodeField['field_name'];
 
         $this->contentType->addField($nodeField, 'string_textfield');
+    }
+
+    /**
+     * Create custom content type using
+     * a instance of ner\ObjectEntity.
+     *
+     * @param ObjectEntity $objectEntity
+     */
+    public function contentTypeByObjectEntity(ObjectEntity $objectEntity) {
+        $this->objectEntity = $objectEntity;
+
+        $this->nodeTypeConfig();
+        $this->nodeFieldBodyConfig();
+
+        if (is_array($this->objectEntity->getDefinitionMap()))
+            $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
+
+        $this->contentType->setEntityDisplay();
+        $this->contentType->save();
     }
 }

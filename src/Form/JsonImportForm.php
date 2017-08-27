@@ -1,10 +1,18 @@
 <?php
+/**
+ * DRUPAL 8 NER importer.
+ * Copyright (C) 2017. Tarik Curto <centro.tarik@live.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ */
 
 namespace Drupal\ner_import\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\ner\ObjectEntity;
 use Drupal\ner_import\JsonImport;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -13,8 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\ner_import\Form
  */
-class JsonImportForm extends FormBase
-{
+class JsonImportForm extends FormBase {
 
     /**
      * @var JsonImport
@@ -24,16 +31,14 @@ class JsonImportForm extends FormBase
     /**
      * {@inheritdoc}
      */
-    public function __construct(JsonImport $nerImport)
-    {
+    public function __construct(JsonImport $nerImport) {
         $this->nerJsonImport = $nerImport;
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function create(ContainerInterface $container)
-    {
+    public static function create(ContainerInterface $container) {
         return new static(
             $container->get('ner_import.json_import')
         );
@@ -43,16 +48,14 @@ class JsonImportForm extends FormBase
     /**
      * {@inheritdoc}
      */
-    public function getFormId()
-    {
+    public function getFormId() {
         return 'ner_import.import';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildForm(array $form, FormStateInterface $form_state)
-    {
+    public function buildForm(array $form, FormStateInterface $form_state) {
         $form['source_import'] = [
             '#type' => 'textarea',
             '#title' => $this->t('Import source'),
@@ -74,8 +77,7 @@ class JsonImportForm extends FormBase
     /**
      * {@inheritdoc}
      */
-    public function validateForm(array &$form, FormStateInterface $form_state)
-    {
+    public function validateForm(array &$form, FormStateInterface $form_state) {
         // Convert source_import: JSON string => Object || Array
         $form_state->setValue('source_import', \json_decode($form_state->getValue('source_import')));
         if (!(\is_object($form_state->getValue('source_import')) || \is_array($form_state->getValue('source_import'))))
@@ -85,8 +87,7 @@ class JsonImportForm extends FormBase
     /**
      * {@inheritdoc}
      */
-    public function submitForm(array &$form, FormStateInterface $form_state)
-    {
+    public function submitForm(array &$form, FormStateInterface $form_state) {
         $sourceImportType = gettype($form_state->getValue('source_import'));
         $sourceImportIsSingleObject = $sourceImportType == 'object' && property_exists($form_state->getValue('source_import'), 'id');
 
