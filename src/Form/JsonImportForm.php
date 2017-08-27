@@ -98,6 +98,7 @@ class JsonImportForm extends FormBase
 
             // source_import can be a map object OR array.
             $objectEntityList = $this->nerJsonImport->objectEntityListByJson($form_state->getValue('source_import'));
+            $this->nerJsonImport->contentTypeByObjectEntityList($objectEntityList);
         }
 
         exit();

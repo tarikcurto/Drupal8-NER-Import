@@ -51,9 +51,42 @@ class Import
      */
     protected $contentType;
 
+    /**
+     * All processed field list.
+     *
+     * @var string[]
+     */
+    protected $fieldNameList;
+
     public function __construct()
     {
-        $this->contentTypeList = [];
+        $this->contentType = new CreateContentType();
+    }
+
+    /**
+     * Create custom content type using
+     * a multiples instances of ner\ObjectEntity.
+     *
+     * @param ObjectEntity[] $objectEntityList
+     */
+    public function contentTypeByObjectEntityList($objectEntityList){
+
+        $objectEntityKeyList = array_keys($objectEntityList);
+        for($i = 0; $i < count($objectEntityList); $i++){
+
+            $this->objectEntity = $objectEntityList[$objectEntityKeyList[$i]];
+
+            if($i == 0){
+                $this->nodeTypeConfig();
+                $this->nodeFieldBodyConfig();
+            }
+
+            if(is_array($this->objectEntity->getDefinitionMap()))
+                $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
+        }
+
+        $this->contentType->setEntityDisplay();
+        $this->contentType->save();
     }
 
     /**
@@ -61,20 +94,13 @@ class Import
      * a instance of ner\ObjectEntity.
      *
      * @param ObjectEntity $objectEntity
-     * @return array
      */
     public function contentTypeByObjectEntity(ObjectEntity $objectEntity)
     {
         $this->objectEntity = $objectEntity;
-        $this->contentType = new CreateContentType();
-        $this->contentTypeList[] = $this->contentType;
 
         $this->nodeTypeConfig();
         $this->nodeFieldBodyConfig();
-
-        if(is_array($this->objectEntity->getSubObjectMap()))
-            foreach ($this->objectEntity->getSubObjectMap() as $subObject)
-                $this->nodeFieldListConfigByDefinitionEntityList($subObject->getDefinitionMap());
 
         if(is_array($this->objectEntity->getDefinitionMap()))
             $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
@@ -157,11 +183,14 @@ class Import
 
         $this->propertyDefinitionEntity = $propertyDefinitionEntity;
 
-        $nodeField['field_name'] = 'field_' . TransformImport::idByString($this->definitionEntity->getSortId() . '.' . $this->propertyDefinitionEntity->getProperty());
+        $nodeField['field_name'] = 'field_' . TransformImport::idByString($this->propertyDefinitionEntity->getProperty());
         $nodeField['label'] = TransformImport::nameByString($nodeField['field_name']);
-        $fieldId = $this->contentType->addField($nodeField, 'string_textfield');
 
-        // TODO: update this
-        //$this->contentFieldListMap[$fieldId] = $fieldId;
+        if(in_array($nodeField['field_name'], $this->fieldNameList))
+            return;
+
+        $this->fieldNameList[] = $nodeField['field_name'];
+
+        $this->contentType->addField($nodeField, 'string_textfield');
     }
 }
