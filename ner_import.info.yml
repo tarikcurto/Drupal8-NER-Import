@@ -1,5 +1,5 @@
 name: NER import
-description: NER (Named Entity Recognition) - import processed data.
+description: Custom NER importer module for Drupal 8.
 package: Custom
 dependencies:
   - ner
