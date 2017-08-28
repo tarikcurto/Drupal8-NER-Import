@@ -21,7 +21,7 @@ use Drupal\ner\PropertyDefinitionEntity;
  *
  * @package Drupal\ner_import
  */
-class Import {
+class StructureImport {
     /**
      * @var ObjectEntity[]
      */
@@ -66,6 +66,15 @@ class Import {
      */
     protected $fieldNameList;
 
+    /**
+     * Array map where:
+     *  - key: PropertyEntity=>property
+     *  - value: ContentType => field => field_name
+     *
+     * @var string[] [string=>string, ...]
+     */
+    protected $propertyToFieldMap;
+
     public function __construct() {
         $this->contentType = new CreateContentType();
     }
@@ -91,6 +100,25 @@ class Import {
             if (is_array($this->objectEntity->getDefinitionMap()))
                 $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
         }
+
+        $this->contentType->setEntityDisplay();
+        $this->contentType->save();
+    }
+
+    /**
+     * Create custom content type using
+     * a instance of ner\ObjectEntity.
+     *
+     * @param ObjectEntity $objectEntity
+     */
+    public function contentTypeByObjectEntity(ObjectEntity $objectEntity) {
+        $this->objectEntity = $objectEntity;
+
+        $this->nodeTypeConfig();
+        $this->nodeFieldBodyConfig();
+
+        if (is_array($this->objectEntity->getDefinitionMap()))
+            $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
 
         $this->contentType->setEntityDisplay();
         $this->contentType->save();
@@ -177,26 +205,20 @@ class Import {
             return;
 
         $this->fieldNameList[] = $nodeField['field_name'];
+        $this->propertyToFieldMap[$this->propertyDefinitionEntity->getProperty()] =  $nodeField['field_name'];
 
         $this->contentType->addField($nodeField, 'string_textfield');
     }
 
     /**
-     * Create custom content type using
-     * a instance of ner\ObjectEntity.
+     * Get generated array map with PropertyEntity => property
+     * - ContentType field => field_name relation during import process.
      *
-     * @param ObjectEntity $objectEntity
+     * @return  string[] [string=>string, ...]
      */
-    public function contentTypeByObjectEntity(ObjectEntity $objectEntity) {
-        $this->objectEntity = $objectEntity;
+    public function getPropertyToFieldMap(){
 
-        $this->nodeTypeConfig();
-        $this->nodeFieldBodyConfig();
-
-        if (is_array($this->objectEntity->getDefinitionMap()))
-            $this->nodeFieldListConfigByDefinitionEntityList($this->objectEntity->getDefinitionMap());
-
-        $this->contentType->setEntityDisplay();
-        $this->contentType->save();
+        return $this->propertyToFieldMap;
     }
+
 }

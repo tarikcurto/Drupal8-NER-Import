@@ -14,6 +14,7 @@ namespace Drupal\ner_import\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ner_import\JsonImport;
+use Drupal\ner_import\StructureImport;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,6 +25,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class JsonImportForm extends FormBase {
 
     /**
+     * @var StructureImport
+     */
+    private $nerStructureImport;
+
+    /**
      * @var JsonImport
      */
     private $nerJsonImport;
@@ -31,7 +37,8 @@ class JsonImportForm extends FormBase {
     /**
      * {@inheritdoc}
      */
-    public function __construct(JsonImport $nerImport) {
+    public function __construct(StructureImport $structureImport, JsonImport $nerImport) {
+        $this->nerStructureImport = $structureImport;
         $this->nerJsonImport = $nerImport;
     }
 
@@ -40,6 +47,7 @@ class JsonImportForm extends FormBase {
      */
     public static function create(ContainerInterface $container) {
         return new static(
+            $container->get('ner_import.structure_import'),
             $container->get('ner_import.json_import')
         );
     }
@@ -94,13 +102,16 @@ class JsonImportForm extends FormBase {
         if ($sourceImportIsSingleObject) {
 
             $objectEntity = $this->nerJsonImport->objectEntityByJson($form_state->getValue('source_import'));
-            $this->nerJsonImport->contentTypeByObjectEntity($objectEntity);
+            $this->nerStructureImport->contentTypeByObjectEntity($objectEntity);
+            $propertyToFieldMap = $this->nerStructureImport->getPropertyToFieldMap();
         } else {
 
-            // source_import can be a map object OR array.
             $objectEntityList = $this->nerJsonImport->objectEntityListByJson($form_state->getValue('source_import'));
-            $this->nerJsonImport->contentTypeByObjectEntityList($objectEntityList);
+            $this->nerStructureImport->contentTypeByObjectEntityList($objectEntityList);
+            $propertyToFieldMap = $this->nerStructureImport->getPropertyToFieldMap();
         }
+
+
 
         exit();
     }

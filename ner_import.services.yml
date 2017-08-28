@@ -1,7 +1,10 @@
 services:
 
-  ner_import.import:
-    class: Drupal\ner_import\Import
+  ner_import.content_import:
+    class: Drupal\ner_import\ContentImport
+
+  ner_import.structure_import:
+    class: Drupal\ner_import\StructureImport
 
   ner_import.json_import:
     class: Drupal\ner_import\JsonImport

@@ -16,12 +16,12 @@ use Drupal\ner\ObjectEntity;
 use Drupal\ner\PropertyDefinitionEntity;
 
 /**
- * NER import extension for import NER
+ * NER import extension for import/transform NER
  * sources in JSON format.
  *
  * @package Drupal\ner_import
  */
-class JsonImport extends Import {
+class JsonImport {
 
     /**
      * JSON object with client import data.
