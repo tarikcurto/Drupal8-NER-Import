@@ -13,6 +13,7 @@ namespace Drupal\ner_import\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\ner_import\JsonImport;
 use Drupal\ner_import\StructureImport;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\ner_import\Form
  */
-class JsonImportForm extends FormBase {
+class StructureImportForm extends FormBase {
 
     /**
      * @var StructureImport
@@ -69,7 +70,6 @@ class JsonImportForm extends FormBase {
             '#title' => $this->t('Import source'),
             '#required' => true,
             '#attributes' => [
-                'placeholder' => 'JSON of object list.'
             ]
         ];
         $form['actions']['#type'] = 'actions';
@@ -96,23 +96,24 @@ class JsonImportForm extends FormBase {
      * {@inheritdoc}
      */
     public function submitForm(array &$form, FormStateInterface $form_state) {
+
         $sourceImportType = gettype($form_state->getValue('source_import'));
         $sourceImportIsSingleObject = $sourceImportType == 'object' && property_exists($form_state->getValue('source_import'), 'id');
 
         if ($sourceImportIsSingleObject) {
-
             $objectEntity = $this->nerJsonImport->objectEntityByJson($form_state->getValue('source_import'));
             $this->nerStructureImport->contentTypeByObjectEntity($objectEntity);
-            $propertyToFieldMap = $this->nerStructureImport->getPropertyToFieldMap();
         } else {
-
             $objectEntityList = $this->nerJsonImport->objectEntityListByJson($form_state->getValue('source_import'));
             $this->nerStructureImport->contentTypeByObjectEntityList($objectEntityList);
-            $propertyToFieldMap = $this->nerStructureImport->getPropertyToFieldMap();
         }
 
+        $redirectUrl = new Url('ner_import.structure_processed');
+        $redirectUrl->setRouteParameters([
+            'compressed_module_url' => $this->nerStructureImport->getCompressedLink(),
+            'property_field_map' => serialize($this->nerStructureImport->getPropertyToFieldMap())
+        ]);
 
-
-        exit();
+        $form_state->setRedirectUrl($redirectUrl);
     }
 }

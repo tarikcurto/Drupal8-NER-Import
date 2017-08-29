@@ -67,6 +67,13 @@ class StructureImport {
     protected $fieldNameList;
 
     /**
+     * Compressed module uri.
+     *
+     * @var string
+     */
+    protected $compressedModuleUri;
+
+    /**
      * Array map where:
      *  - key: PropertyEntity=>property
      *  - value: ContentType => field => field_name
@@ -76,6 +83,8 @@ class StructureImport {
     protected $propertyToFieldMap;
 
     public function __construct() {
+        $this->contentTypeList = [];
+        $this->fieldNameList = [];
         $this->contentType = new CreateContentType();
     }
 
@@ -102,7 +111,7 @@ class StructureImport {
         }
 
         $this->contentType->setEntityDisplay();
-        $this->contentType->save();
+        $this->compressedModuleUri = $this->contentType->save();
     }
 
     /**
@@ -134,10 +143,6 @@ class StructureImport {
 
         $nodeType = [];
         $nodeId = TransformImport::idByString($this->objectEntity->getType());
-
-        // TODO: Update this
-        /*if(isset($this->contentTypeList[$nodeId]))
-            return;*/
 
         $nodeType['type'] = $nodeId;
         $nodeType['name'] = TransformImport::nameByString($this->objectEntity->getType());
@@ -208,6 +213,17 @@ class StructureImport {
         $this->propertyToFieldMap[$this->propertyDefinitionEntity->getProperty()] =  $nodeField['field_name'];
 
         $this->contentType->addField($nodeField, 'string_textfield');
+    }
+
+    /**
+     * Get .tar.gz file that contains YML config
+     * files of content type.
+     *
+     * @return string
+     */
+    public function getCompressedLink(){
+
+        return file_create_url($this->compressedModuleUri);
     }
 
     /**

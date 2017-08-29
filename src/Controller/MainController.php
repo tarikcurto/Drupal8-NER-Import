@@ -31,8 +31,25 @@ class MainController extends ControllerBase {
         return [
             '#theme' => 'setup_page',
             '#links' => [
-                (string)$this->t('Import using JSON script.') => Url::fromRoute('ner_import.import')
+                (string)$this->t('Import structure') => Url::fromRoute('ner_import.import_structure'),
+                (string)$this->t('Import content') => '#'
             ]
+        ];
+    }
+
+    /**
+     * Processed data when client execute
+     * any structure import process.
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function structureProcessed(){
+
+        return [
+            '#theme' => 'structure_processed_page',
+            '#compressed_module_url' => \Drupal::request()->query->get('compressed_module_url'),
+            '#property_field_map' => \Drupal::request()->query->get('property_field_map')
         ];
     }
 }

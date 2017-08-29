@@ -4,9 +4,13 @@
 
         <div class="block">
 
-            {% for link_text, link_href in links %}
-                <a href="{{ link_href }}">{{ link_text }}</a>
-            {% endfor %}
+            <ul>
+                {% for link_text, link_href in links %}
+                    <li>
+                        <a href="{{ link_href }}">{{ link_text }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
 
         </div>
 
