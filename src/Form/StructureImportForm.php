@@ -111,7 +111,8 @@ class StructureImportForm extends FormBase {
         $redirectUrl = new Url('ner_import.processed_structure');
         $redirectUrl->setRouteParameters([
             'compressed_module_url' => $this->nerStructureImport->getCompressedLink(),
-            'property_field_map' => serialize($this->nerStructureImport->getPropertyToFieldMap())
+            'property_field_map' => serialize($this->nerStructureImport->getPropertyToFieldMap()),
+            'content_type_id' => $this->nerStructureImport->getContentTypeId()
         ]);
 
         $form_state->setRedirectUrl($redirectUrl);

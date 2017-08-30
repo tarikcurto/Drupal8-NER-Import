@@ -46,9 +46,10 @@ class MainController extends ControllerBase {
     public function structureProcessed(){
 
         return [
-            '#theme' => 'structure_processed_page',
+            '#theme' => 'processed_structure_page',
             '#compressed_module_url' => \Drupal::request()->query->get('compressed_module_url'),
-            '#property_field_map' => \Drupal::request()->query->get('property_field_map')
+            '#property_field_map' => \Drupal::request()->query->get('property_field_map'),
+            '#content_type_id' => \Drupal::request()->query->get('content_type_id')
         ];
     }
 

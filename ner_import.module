@@ -18,12 +18,13 @@ function ner_import_theme() {
         'template' => 'setup'
     ];
 
-    $theme['structure_processed_page'] = [
+    $theme['processed_structure_page'] = [
         'variables' => [
             'compressed_module_url' => '#',
-            'property_field_map' => ''
+            'property_field_map' => '',
+            'content_type_id' => ''
         ],
-        'template' => 'structure_processed'
+        'template' => 'processed_structure'
     ];
 
     return $theme;

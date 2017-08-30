@@ -60,6 +60,13 @@ class StructureImport {
     protected $contentType;
 
     /**
+     * Current ContentType id.
+     *
+     * @var string
+     */
+    protected $contentTypeId;
+
+    /**
      * All processed field list.
      *
      * @var string[]
@@ -147,7 +154,8 @@ class StructureImport {
         $nodeType['type'] = $nodeId;
         $nodeType['name'] = TransformImport::nameByString($this->objectEntity->getType());
 
-        $this->contentType->setNodeType($nodeType);
+        $contentTypeId = $this->contentType->setNodeType($nodeType);
+        $this->contentTypeId = $contentTypeId;
     }
 
     /**
@@ -224,6 +232,16 @@ class StructureImport {
     public function getCompressedLink(){
 
         return file_create_url($this->compressedModuleUri);
+    }
+
+    /**
+     * Content type id of imported structure.
+     *
+     * @return string
+     */
+    public function getContentTypeId(){
+
+        return $this->contentTypeId;
     }
 
     /**

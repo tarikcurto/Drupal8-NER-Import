@@ -16,6 +16,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\ner_import\ContentImport;
 use Drupal\ner_import\JsonImport;
+use Drupal\node\Entity\Node;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -65,9 +66,9 @@ class ContentImportForm extends FormBase {
      * {@inheritdoc}
      */
     public function buildForm(array $form, FormStateInterface $form_state) {
-        $form['source_import'] = [
-            '#type' => 'textarea',
-            '#title' => $this->t('Import source'),
+        $form['content_type_id'] = [
+            '#type' => 'textfield',
+            '#title' => $this->t('Content type identifier'),
             '#required' => true,
             '#attributes' => [
             ]
@@ -75,6 +76,14 @@ class ContentImportForm extends FormBase {
         $form['property_field_associative'] = [
             '#type' => 'textarea',
             '#title' => $this->t('Property with field name, associative relation'),
+            '#required' => true,
+            '#attributes' => [
+                'rows' => '2'
+            ]
+        ];
+        $form['source_import'] = [
+            '#type' => 'textarea',
+            '#title' => $this->t('Import source'),
             '#required' => true,
             '#attributes' => [
             ]
@@ -93,6 +102,11 @@ class ContentImportForm extends FormBase {
      * {@inheritdoc}
      */
     public function validateForm(array &$form, FormStateInterface $form_state) {
+
+        $form_state->setValue('property_field_associative', @\unserialize($form_state->getValue('property_field_associative')));
+        if(!\is_array($form_state->getValue('property_field_associative')))
+            $form_state->setErrorByName('property_field_associative', $this->t('Associative property field not is valid.'));
+
         // Convert source_import: JSON string => Object || Array
         $form_state->setValue('source_import', \json_decode($form_state->getValue('source_import')));
         if (!(\is_object($form_state->getValue('source_import')) || \is_array($form_state->getValue('source_import'))))
@@ -107,16 +121,22 @@ class ContentImportForm extends FormBase {
         $sourceImportType = gettype($form_state->getValue('source_import'));
         $sourceImportIsSingleObject = $sourceImportType == 'object' && property_exists($form_state->getValue('source_import'), 'id');
 
+        $this->contentImport->setContentTypeId($form_state->getValue('content_type_id'));
+        $this->contentImport->setPropertyToFieldMap($form_state->getValue('property_field_associative'));
+
         if ($sourceImportIsSingleObject) {
             $objectEntity = $this->nerJsonImport->objectEntityByJson($form_state->getValue('source_import'));
+            $this->contentImport->byObjectEntity($objectEntity);
         } else {
             $objectEntityList = $this->nerJsonImport->objectEntityListByJson($form_state->getValue('source_import'));
+            $this->contentImport->byObjectEntityList($objectEntityList);
         }
 
-        $redirectUrl = new Url('ner_import.processed_content');
-        $redirectUrl->setRouteParameters([
-        ]);
+        exit();
+        //$redirectUrl = new Url('ner_import.processed_content');
+        //$redirectUrl->setRouteParameters([
+        //]);
 
-        $form_state->setRedirectUrl($redirectUrl);
+        //$form_state->setRedirectUrl($redirectUrl);
     }
 }
