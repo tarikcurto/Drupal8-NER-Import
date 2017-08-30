@@ -32,7 +32,7 @@ class MainController extends ControllerBase {
             '#theme' => 'setup_page',
             '#links' => [
                 (string)$this->t('Import structure') => Url::fromRoute('ner_import.import_structure'),
-                (string)$this->t('Import content') => '#'
+                (string)$this->t('Import content') => Url::fromRoute('ner_import.import_content')
             ]
         ];
     }
@@ -41,7 +41,6 @@ class MainController extends ControllerBase {
      * Processed data when client execute
      * any structure import process.
      *
-     * @param Request $request
      * @return array
      */
     public function structureProcessed(){
@@ -50,6 +49,19 @@ class MainController extends ControllerBase {
             '#theme' => 'structure_processed_page',
             '#compressed_module_url' => \Drupal::request()->query->get('compressed_module_url'),
             '#property_field_map' => \Drupal::request()->query->get('property_field_map')
+        ];
+    }
+
+    /**
+     * Processed data when client execute
+     * any data import process.
+     *
+     * @return array
+     */
+    public function contentProcessed(){
+
+        return [
+
         ];
     }
 }

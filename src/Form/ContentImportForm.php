@@ -14,21 +14,21 @@ namespace Drupal\ner_import\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\ner_import\ContentImport;
 use Drupal\ner_import\JsonImport;
-use Drupal\ner_import\StructureImport;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Implements NER structure import form.
+ * Implements NER content import form.
  *
  * @package Drupal\ner_import\Form
  */
-class StructureImportForm extends FormBase {
+class ContentImportForm extends FormBase {
 
     /**
-     * @var StructureImport
+     * @var ContentImport
      */
-    private $nerStructureImport;
+    private $contentImport;
 
     /**
      * @var JsonImport
@@ -38,8 +38,8 @@ class StructureImportForm extends FormBase {
     /**
      * {@inheritdoc}
      */
-    public function __construct(StructureImport $structureImport, JsonImport $nerImport) {
-        $this->nerStructureImport = $structureImport;
+    public function __construct(ContentImport $contentImport, JsonImport $nerImport) {
+        $this->contentImport = $contentImport;
         $this->nerJsonImport = $nerImport;
     }
 
@@ -48,7 +48,7 @@ class StructureImportForm extends FormBase {
      */
     public static function create(ContainerInterface $container) {
         return new static(
-            $container->get('ner_import.structure_import'),
+            $container->get('ner_import.content_import'),
             $container->get('ner_import.json_import')
         );
     }
@@ -58,7 +58,7 @@ class StructureImportForm extends FormBase {
      * {@inheritdoc}
      */
     public function getFormId() {
-        return 'ner_import.import_structure';
+        return 'ner_import.import_content';
     }
 
     /**
@@ -72,10 +72,17 @@ class StructureImportForm extends FormBase {
             '#attributes' => [
             ]
         ];
+        $form['property_field_associative'] = [
+            '#type' => 'textarea',
+            '#title' => $this->t('Property with field name, associative relation'),
+            '#required' => true,
+            '#attributes' => [
+            ]
+        ];
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
             '#type' => 'submit',
-            '#value' => $this->t('Import structure'),
+            '#value' => $this->t('Import content'),
             '#button_type' => 'primary',
         ];
 
@@ -102,16 +109,12 @@ class StructureImportForm extends FormBase {
 
         if ($sourceImportIsSingleObject) {
             $objectEntity = $this->nerJsonImport->objectEntityByJson($form_state->getValue('source_import'));
-            $this->nerStructureImport->contentTypeByObjectEntity($objectEntity);
         } else {
             $objectEntityList = $this->nerJsonImport->objectEntityListByJson($form_state->getValue('source_import'));
-            $this->nerStructureImport->contentTypeByObjectEntityList($objectEntityList);
         }
 
-        $redirectUrl = new Url('ner_import.processed_structure');
+        $redirectUrl = new Url('ner_import.processed_content');
         $redirectUrl->setRouteParameters([
-            'compressed_module_url' => $this->nerStructureImport->getCompressedLink(),
-            'property_field_map' => serialize($this->nerStructureImport->getPropertyToFieldMap())
         ]);
 
         $form_state->setRedirectUrl($redirectUrl);

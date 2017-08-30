@@ -7,17 +7,33 @@ ner_import.setup:
     _permission: 'access content'
 
 ner_import.import_structure:
-  path: '/admin/config/ner/import/structure'
+  path: '/admin/config/ner/import/import-structure'
   defaults:
     _form: '\Drupal\ner_import\Form\StructureImportForm'
     _title: 'Import structure'
   requirements:
     _permission: 'access content'
 
-ner_import.structure_processed:
-  path: '/admin/config/ner/import/structure-processed'
+ner_import.import_content:
+  path: '/admin/config/ner/import/import-content'
+  defaults:
+    _form: '\Drupal\ner_import\Form\ContentImportForm'
+    _title: 'Import content'
+  requirements:
+    _permission: 'access content'
+
+ner_import.processed_structure:
+  path: '/admin/config/ner/import/processed-structure'
   defaults:
     _controller: '\Drupal\ner_import\Controller\MainController:structureProcessed'
-    _title: 'Processed structure  '
+    _title: 'Processed structure'
+  requirements:
+    _permission: 'access content'
+
+ner_import.processed_content:
+  path: '/admin/config/ner/import/processed-content'
+  defaults:
+    _controller: '\Drupal\ner_import\Controller\MainController:contentProcessed'
+    _title: 'Processed content'
   requirements:
     _permission: 'access content'
