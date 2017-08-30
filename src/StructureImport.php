@@ -81,6 +81,20 @@ class StructureImport {
     protected $compressedModuleUri;
 
     /**
+     * Property key used by set entity title.
+     *
+     * @var string
+     */
+    protected $propertyForEntityTitle;
+
+    /**
+     * Property key used by set entity body.
+     *
+     * @var string
+     */
+    protected $propertyForEntityBody;
+
+    /**
      * Array map where:
      *  - key: PropertyEntity=>property
      *  - value: ContentType => field => field_name
@@ -218,9 +232,16 @@ class StructureImport {
             return;
 
         $this->fieldNameList[] = $nodeField['field_name'];
-        $this->propertyToFieldMap[$this->propertyDefinitionEntity->getProperty()] =  $nodeField['field_name'];
 
-        $this->contentType->addField($nodeField, 'string_textfield');
+        if($this->propertyDefinitionEntity->getProperty() == $this->propertyForEntityTitle){
+            $this->propertyToFieldMap[$this->propertyDefinitionEntity->getProperty()] =  'title';
+        }elseif($this->propertyDefinitionEntity->getProperty() == $this->propertyForEntityBody){
+            $this->propertyToFieldMap[$this->propertyDefinitionEntity->getProperty()] =  'body';
+        }else{
+            $this->propertyToFieldMap[$this->propertyDefinitionEntity->getProperty()] =  $nodeField['field_name'];
+            $this->contentType->addField($nodeField, 'string_textfield');
+        }
+
     }
 
     /**
@@ -242,6 +263,26 @@ class StructureImport {
     public function getContentTypeId(){
 
         return $this->contentTypeId;
+    }
+
+    /**
+     * Set property key for associate to entity title.
+     *
+     * @param $propertyForEntityTitle
+     */
+    public function setPropertyForEntityTitle($propertyForEntityTitle){
+
+        $this->propertyForEntityTitle = $propertyForEntityTitle;
+    }
+
+    /**
+     * Set property key for associate to entity body.
+     *
+     * @param string $propertyForEntityBody
+     */
+    public function setPropertyForEntityBody($propertyForEntityBody){
+
+        $this->propertyForEntityBody = $propertyForEntityBody;
     }
 
     /**

@@ -72,6 +72,20 @@ class StructureImportForm extends FormBase {
             '#attributes' => [
             ]
         ];
+        $form['property_entity_title'] = [
+            '#type' => 'textfield',
+            '#title' => $this->t('Property for entity title'),
+            '#required' => true,
+            '#attributes' => [
+            ]
+        ];
+        $form['property_entity_body'] = [
+            '#type' => 'textfield',
+            '#title' => $this->t('Property for entity body'),
+            '#required' => false,
+            '#attributes' => [
+            ]
+        ];
         $form['actions']['#type'] = 'actions';
         $form['actions']['submit'] = [
             '#type' => 'submit',
@@ -99,6 +113,11 @@ class StructureImportForm extends FormBase {
 
         $sourceImportType = gettype($form_state->getValue('source_import'));
         $sourceImportIsSingleObject = $sourceImportType == 'object' && property_exists($form_state->getValue('source_import'), 'id');
+
+        $this->nerStructureImport->setPropertyForEntityTitle($form_state->getValue('property_entity_title'));
+
+        if($form_state->getValue('property_entity_body'))
+            $this->nerStructureImport->setPropertyForEntityBody($form_state->getValue('property_entity_body'));
 
         if ($sourceImportIsSingleObject) {
             $objectEntity = $this->nerJsonImport->objectEntityByJson($form_state->getValue('source_import'));
