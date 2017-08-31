@@ -13,6 +13,7 @@ namespace Drupal\ner_import\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
 
 /**
  * Default controller of module
@@ -61,8 +62,15 @@ class MainController extends ControllerBase {
      */
     public function contentProcessed(){
 
-        return [
+        $nodeIdList = explode(',', \Drupal::request()->query->get('node_id_list'));
 
+        $nodeList = [];
+        foreach ($nodeIdList as $nodeId)
+            $nodeList[] = Node::load($nodeId);
+
+        return [
+            '#theme' => 'processed_content_page',
+            '#node_list' => $nodeList
         ];
     }
 }

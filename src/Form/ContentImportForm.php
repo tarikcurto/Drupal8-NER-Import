@@ -124,19 +124,21 @@ class ContentImportForm extends FormBase {
         $this->contentImport->setContentTypeId($form_state->getValue('content_type_id'));
         $this->contentImport->setPropertyToFieldMap($form_state->getValue('property_field_associative'));
 
+        $nodeIdList = [];
+
         if ($sourceImportIsSingleObject) {
             $objectEntity = $this->nerJsonImport->objectEntityByJson($form_state->getValue('source_import'));
-            $this->contentImport->byObjectEntity($objectEntity);
+            $nodeIdList[] = $this->contentImport->byObjectEntity($objectEntity);
         } else {
             $objectEntityList = $this->nerJsonImport->objectEntityListByJson($form_state->getValue('source_import'));
-            $this->contentImport->byObjectEntityList($objectEntityList);
+            $nodeIdList = $this->contentImport->byObjectEntityList($objectEntityList);
         }
 
-        exit();
-        //$redirectUrl = new Url('ner_import.processed_content');
-        //$redirectUrl->setRouteParameters([
-        //]);
+        $redirectUrl = new Url('ner_import.processed_content');
+        $redirectUrl->setRouteParameters([
+            'node_id_list' =>implode(',', $nodeIdList)
+        ]);
 
-        //$form_state->setRedirectUrl($redirectUrl);
+        $form_state->setRedirectUrl($redirectUrl);
     }
 }
