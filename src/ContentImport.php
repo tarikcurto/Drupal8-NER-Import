@@ -91,7 +91,8 @@ class ContentImport {
             foreach ($nodeData['field_map'] as $fieldKey => $fieldValue)
                 $n->{$fieldKey}->setValue($fieldValue);
 
-        return $n->save();
+        $n->save();
+        return $n->id();
     }
 
     /**

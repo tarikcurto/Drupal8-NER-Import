@@ -27,5 +27,12 @@ function ner_import_theme() {
         'template' => 'processed_structure'
     ];
 
+    $theme['processed_content_page'] = [
+        'variables' => [
+            'node_list' => []
+        ],
+        'template' => 'processed_content'
+    ];
+
     return $theme;
 }
